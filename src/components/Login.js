@@ -1,12 +1,13 @@
 import React from "react";
 import { useState } from "react";
-
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
 
  
 const [email, setEmail] = useState(""); // State variable for storing email input
 const [password, setPassword] = useState(""); // State variable for storing password input
+const navigate = useNavigate();
 
 // Function to handle user login process
 const handleLogin = async () => {
@@ -25,6 +26,12 @@ const handleLogin = async () => {
     result = await result.json();
     // Logging the result of the login attempt
     console.log(result);
+    if(result.name){
+        localStorage.setItem('user',JSON.stringify(result));
+        navigate('/');
+    } else{
+        alert('Please provide valid Email and password');
+    }
 }
 
 // Rendering the login form
