@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
     const auth = localStorage.getItem('user');
     const navigate = useNavigate();
+    // Logout function
     const logout = () => {
         localStorage.clear();
         navigate('/signup');
@@ -11,20 +12,26 @@ const Navbar = () => {
 
     return (
         <div>
-            <ul className="nav-ul">
+            <img src="https://pbs.twimg.com/profile_images/1491054304559575040/ye912bbZ_400x400.jpg"
+                alt="logo" className="logo" />
+            {/* Feature, if you are not log in, product menu will be hidden */}
+            {auth ?
+                <ul className="nav-ul">
+                    <li><Link to="/">Products</Link></li>
+                    <li><Link to="/add">Add Products</Link></li>
+                    <li> <Link to="/update">update Products</Link></li>
+                    <li> <Link to="/profile">profile</Link></li>
+                    <li><Link onClick={logout} to="/signup">logout ({JSON.parse(auth).name}) </Link></li>
+                    {/*feature above If you are login, then your name will be appear on nav */}
 
-                <li><Link to="/">Product Component</Link></li>
-                <li><Link to="/Add">Add Product Component</Link></li>
-                <li> <Link to="/Update">update Product Component</Link></li>
+                </ul> :
+                <ul className="nav-ul nav-right">
 
-                <li> <Link to="/Profile">profile Component</Link></li>
-                {/* The feature of " if user is logged in , sign up button will not show and logout will show and if user is not logged in then sign up button will show ,logout will not show */}
-                <li> {auth ? <Link onClick={logout} to="/signup">logout</Link> :
-                    <Link to="/signup">signup</Link>}</li>
-                <li><Link to="/login">Login</Link> </li>
+                    <li><Link to="/signup">signup</Link></li>
+                    <li><Link to="/login">Login</Link> </li>
 
-
-            </ul>
+                </ul>
+            }
         </div>
     )
 }
