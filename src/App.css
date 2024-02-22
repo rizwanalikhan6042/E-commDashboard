@@ -1,46 +1,59 @@
-.nav-ul li{
+.nav-ul li {
   display: inline-block;
   padding: 10px;
 }
-.nav-ul li a{
+
+.nav-ul li a {
   color: #fff;
   padding: 5px;
   text-decoration: none;
 }
-.nav-ul{
+
+.nav-ul {
   padding: 5px;
   margin: 0;
   background-color: #61dafb;
 }
-.footer{
+
+.footer {
   position: absolute;
   bottom: 0;
   text-align: center;
   width: 100%;
   background-color: skyblue;
 }
-.inputBox{
+
+.inputBox {
   display: block;
   margin: 25px;
   padding: 7px;
   width: 300px;
   border: 1px solid skyblue;
 }
-.register{
+
+.register,
+.product {
   margin-left: 30%;
 }
-.login{
+
+.login {
   margin-left: 30%;
   margin-top: 100px;
-}
-.Appbutton{
-  margin: 25px;
-    padding: 10px;
-    width: 150px;
-    background-color: skyblue;
-    border: 1px solid;
-    cursor: pointer;
 
+}
+
+.Appbutton {
+  margin: 25px;
+  padding: 10px;
+  width: 150px;
+  background-color: skyblue;
+  border: 1px solid;
+  cursor: pointer;
+
+}
+
+.nav-right {
+  text-align: right;
 }
 
 
@@ -55,8 +68,21 @@
   color: white;
 }
 
+.logo {
+  width: 45px;
+  float: left;
+  border-radius: 50%;
+  margin-top: 3px;
+  margin-left: 20px;
+}
+
+.invalid-input {
+  color: red;
+  margin-top: -20px;
+  display: block;
+  margin-left: 25px;
+}
+
 .App-link {
   color: #61dafb;
 }
-
-
