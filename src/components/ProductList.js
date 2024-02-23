@@ -4,18 +4,21 @@ import React, { useState, useEffect } from 'react';
 const ProductList = () => {
     const [products, setProducts] = useState([]);
 
+    //using useEffect hook to fetch products data when the component mounts
+
     useEffect(() => {
         getProducts();
 
     }, [])
 
+    // Async function to fetch products data from the server
     const getProducts = async () => {
-        let result = await fetch('http://localhost:3200/products')
+        let result = await fetch('http://localhost:3200/products')   // Sending a GET request to the specified URL to fetch products data
         result = await result.json();
-        setProducts(result);
+        setProducts(result);                                        // Updating the 'products' state with the fetched data
     }
     console.log(products);
-
+ // Rendering the list of products
     return (
         <div className='product-list'>
             <h3>Product List</h3>
@@ -26,6 +29,7 @@ const ProductList = () => {
                  <li><b>Category</b></li>
                  <li><b>Company</b></li>
              </ul>
+    {/* Mapping through the 'products' array and rendering each product */}
             {products.map((item,index)=>
                  <ul>
                  <li>{index+1}</li>
