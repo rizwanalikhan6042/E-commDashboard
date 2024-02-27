@@ -1,23 +1,28 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from 'react-router-dom';
+import { useParams , useNavigate } from 'react-router-dom';
 // import { listeners } from "../../../FileVideo13-20/Expressstart/DB/users";
 
 
-const UpdateProduct = (props) => {
-    const [name, setName] = useState('');                          // State variables to store product details
-    console.log("new", name);                                   
-    const [price, setPrice] = useState("");                         
+const UpdateProduct = () => {
+    const [name, setName] = useState('');
+    console.log("new", name);
+    const [price, setPrice] = useState("");
     const [category, setCategory] = useState("");
     const [company, setCompany] = useState("");
     const params = useParams();
-    
-// Fetch product details when component mounts
-    
+    const navigate = useNavigate();
+
+
+    // useEffect(() => {
+    //     //    console.log(params);
+    //  getProductDetails();
+    // }, [])
+
     useEffect(() => {
         getProductDetails();
     }, []);
 
-// Function to fetch product details from the server
+
     const getProductDetails = async () => {
         // console.log(params);
         let result = await fetch(`http://localhost:3200/product/${params.id}`);
@@ -36,10 +41,18 @@ const UpdateProduct = (props) => {
     }
 
 
-// Function to update product details
-    const updateProduct = () => {
-        console.log(name, price, category, company);
-        setName(name)
+
+    const updateProduct = async () => {
+        let result = await fetch(`http://localhost:3200/product/${params.id}`, {
+            method: 'put',
+            body: JSON.stringify({ name, price, category, company }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        result = await result.json();
+        console.log(result);
+        navigate('/');
     }
 
 
