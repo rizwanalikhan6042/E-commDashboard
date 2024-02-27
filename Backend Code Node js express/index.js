@@ -50,7 +50,6 @@ app.post('/add-product', async (req,resp)=>{
     
 })
 
-// Route handler for fetching all products
 app.get('/products',async (req,resp)=>{
     let products = await Product.find();
     if(products.length>0){
@@ -60,20 +59,25 @@ app.get('/products',async (req,resp)=>{
     }
 })
 
-// Route handler for deleting a product by ID
 app.delete('/product/:id',async (req,resp)=>{
-    const result = await Product.deleteOne({_id:req.params.id});   // Deleting the product by ID
+    const result = await Product.deleteOne({_id:req.params.id});
     resp.send(result);
 })
 
-// Route handler for fetching a product by ID
 app.get('/product/:id',async(req,resp)=>{
-    let result = await Product.findOne({_id:req.params.id});       // Finding a product by ID
+    let result = await Product.findOne({_id:req.params.id});
     if(result){
-    resp.send(result);                     // Sending the product back as the response if found
+    resp.send(result);
     } else{
-        resp.send({result: "No record found"})     // Sending a message if no product is found
+        resp.send({"result": "No record found"})
     }
+})
+app.put('/product/:id', async(req,resp)=>{
+    let result = await Product.updateOne(
+        {_id:req.params.id},
+        {$set: req.body }
+        )
+    resp.send(result);
 })
 
 app.listen(3200);
