@@ -1,28 +1,64 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useParams  } from 'react-router-dom';
+// import { listeners } from "../../../FileVideo13-20/Expressstart/DB/users";
 
 
-const UpdateProduct = () => {
-    // State variables to manage input field values
-    const [name, setName] = useState("");
+const UpdateProduct = (props) => {
+    const [name, setName] = useState('');
+    console.log("new",name);
     const [price, setPrice] = useState("");
     const [category, setCategory] = useState("");
     const [company, setCompany] = useState("");
+    const params = useParams();
     
-    // Function to handle product update
-    const updateProduct = () =>{
-        console.log(name,price,category,company);
+
+    // useEffect(() => {
+    //     //    console.log(params);
+    //  getProductDetails();
+    // }, [])
+    
+    useEffect(() => {
+      
+          
+            
+        
+        getProductDetails();
+    
+}, []);
+   const getProductDetails = async () => {
+        // console.log(params);
+        let result = await fetch(`http://localhost:3200/product/${params.id}`);
+        result = await result.json();
+        console.log(result);
+        setName(result.name);
+        console.log(name);
+
+        console.log(name)
+        setPrice(result.price);
+        console.log(price)
+
+        setCategory(result.category);
+        setCompany(result.company);
+
     }
-       
+
+
+
+    const updateProduct =  () => {
+        console.log(name, price, category, company);
+        setName(name)
+    }
+
 
     return (
         <div className="product">
             <h2>Update Product</h2>
-           {/* Input fields for updating product details */}
-            <input className="inputBox" onChange={(e) => { setName(e.target.value) }} type="text" placeholder="Update product name" />
-            <input className="inputBox" onChange={(e) => { setPrice(e.target.value) }} type="text" placeholder="Update product price" />
-            <input className="inputBox" onChange={(e) => { setCategory(e.target.value) }} type="text" placeholder="Enter product category" />
-            <input className="inputBox" onChange={(e) => { setCompany(e.target.value) }} type="text" placeholder="Enter product company" />
-            <button className="Appbutton"  onClick={updateProduct} >Update Product</button> {/* Button to update product details */}
+            {/* Input fields for updating product details */}
+            <input className="inputBox"  value={name} onChange={(e) => { setName(e.target.value) }} type="text" placeholder="Update product name" />
+            <input className="inputBox" value={price}  onChange={(e) => { setPrice(e.target.value) }} type="text" placeholder="Update product price" />
+            <input className="inputBox"  value={category} onChange={(e) => { setCategory(e.target.value) }} type="text" placeholder="Enter product category" />
+            <input className="inputBox"  value={company} onChange={(e) => { setCompany(e.target.value) }} type="text" placeholder="Enter product company" />
+            <button className="Appbutton" onClick={updateProduct} >Update Product</button>
 
         </div>
     )
