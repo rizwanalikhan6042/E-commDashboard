@@ -20,9 +20,16 @@ app.post('/register/', async (req, resp) => {
     // For the sign up registration API, removing the password in response
     result = result.toObject();
     delete result.password;
+    Jwt.sign({ result }, jwtKey, { expiresIn: '2h' }, (err, token) => {
+        if (err) {
+            resp.send({ result: "Something went wrong,Please try again after sometime!" });
+        }
+        resp.send({ result, auth: token });
+    })
+
     console.log(result);
     // Sending the result back as the response
-    resp.send(result);
+
 })
 
 // Route handler for user login
