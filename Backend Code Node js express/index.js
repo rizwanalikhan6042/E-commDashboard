@@ -3,6 +3,10 @@ const cors = require('cors');
 require('./config');
 const userfileRef = require('./users');
 const Product = require('./product');
+
+const Jwt = require('jsonwebtoken');
+const jwtKey = 'e-comm';
+
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -23,22 +27,31 @@ app.post('/register/', async (req, resp) => {
 
 // Route handler for user login
 app.post('/login', async (req, resp) => {
-    // Find the user based on the request body which typically contains user credentials
+    // Check if both email and password are provided in the request body
     if (req.body.email && req.body.password) {
+        // Find the user in the database based on the provided email and password
         let user = await userfileRef.findOne(req.body).select("-password");
         // We should not include the password in the response to enhance security so select() used
         // Respond with the request body, which typically contains user credentials
+
         if (user) {
-            resp.send(user);
-            console.log(user)
+            // Generate a JWT token for the user's authentication                                     // If the user is found in the database
+            Jwt.sign({ user }, jwtKey, { expiresIn: '2h' }, (err, token) => {
+                if (err) {                           // If there's an error while generating the token
+                    resp.send({ result: "something went wrong,Please try again" })
+                }
+                resp.send({ user, auth: token });  // Respond with the user object (excluding the password) and the JWT token
+            })
+
         }
-        // If we don't find the user then
+        // If the user is not found in the database
         else {
-            resp.send({ result: "User not found" });
+            resp.send({ result: "User not found" }); // Respond with a message indicating that the user was not found
         }
 
     } else {
-        // If we have only one thing email or password, this would have feature to ask for both thing
+        // If either email or password is missing in the request body
+        // Respond with a message indicating that both email and password are required
         resp.send({ result: "Provide both email and password" });
     }
 })
@@ -79,36 +92,30 @@ app.put('/product/:id', async (req, resp) => {
     )
     resp.send(result);
 })
-// This endpoint handles GET requests to search for products based on a key 
+
+// This endpoint handles GET requests to search for products based on a key
+// app.get('/search/:key', async (req, resp) => {
+//     // Use async/await to ensure asynchronous execution
+//     // Search for products matching the provided key using MongoDB's Product model
+//     let result = await Product.find({
+//         "$or": [
+//             { name: { $regex: req.params.key } }
+//         ]
+//     });
+//     resp.send(result);
+// })
+//explaination of last search api
 // Using $or operator to find documents where 'name' matches the regex pattern specified by the 'key' parameter
 // Additional $or conditions can be added here if needed
 app.get('/search/:key', async (req, resp) => {
-    let result = await Product.find({
-        "$or": [
-            { name: { $regex: req.params.key } }
-           
 
-        ]
-    });
-    resp.send(result);
-})
-
-// If you want to search by multiple fields such as name and Company then this below code will be implemented
-app.get('/search/:key', async (req, resp) => {
     let result = await Product.find({
         "$or": [
             { name: { $regex: req.params.key } },
             { company: { $regex: req.params.key } }
         ]
     });
-resp.send(result);
+    resp.send(result);
 })
-app.listen(3200);
-//regex
-// In JavaScript, the $regex operator is used in conjunction with MongoDB queries to perform pattern matching within documents. 
-// It allows you to find documents where a particular field matches a specified regular expression pattern.
-// { name: { $regex: req.params.key } } This MongoDB query is searching for documents in the Product collection 
-// where the name field matches the regex pattern specified by req.params.key. 
-// The $or operator in MongoDB allows you to perform a logical OR operation on an array of two or more expressions. 
-// It's commonly used when you want to find documents that satisfy at least one of multiple conditions.
 
+app.listen(3200);
