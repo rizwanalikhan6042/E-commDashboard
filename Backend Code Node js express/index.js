@@ -79,7 +79,9 @@ app.put('/product/:id', async (req, resp) => {
     )
     resp.send(result);
 })
-
+// This endpoint handles GET requests to search for products based on a key 
+// Using $or operator to find documents where 'name' matches the regex pattern specified by the 'key' parameter
+// Additional $or conditions can be added here if needed
 app.get('/search/:key', async (req, resp) => {
     let result = await Product.find({
         "$or": [
@@ -102,3 +104,11 @@ app.get('/search/:key', async (req, resp) => {
 resp.send(result);
 })
 app.listen(3200);
+//regex
+// In JavaScript, the $regex operator is used in conjunction with MongoDB queries to perform pattern matching within documents. 
+// It allows you to find documents where a particular field matches a specified regular expression pattern.
+// { name: { $regex: req.params.key } } This MongoDB query is searching for documents in the Product collection 
+// where the name field matches the regex pattern specified by req.params.key. 
+// The $or operator in MongoDB allows you to perform a logical OR operation on an array of two or more expressions. 
+// It's commonly used when you want to find documents that satisfy at least one of multiple conditions.
+
