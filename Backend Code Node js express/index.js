@@ -5,6 +5,7 @@ const userfileRef = require('./users');
 const Product = require('./product');
 
 const Jwt = require('jsonwebtoken');
+const { LEGAL_TCP_SOCKET_OPTIONS } = require('mongodb');
 const jwtKey = 'e-comm';
 
 const app = express();
@@ -12,7 +13,7 @@ app.use(cors());
 app.use(express.json());
 // In the post route, I am adding comments to understand properly the working of route
 // Handling POST requests to the '/register' endpoint for registration signup
-app.post('/register/', async (req, resp) => {
+app.post('/register/', verifyToken, async (req, resp) => {
     // Creating a new user instance with the data from the request body
     let userRef = new userfileRef(req.body);
     // Saving the new user to the database
@@ -33,7 +34,7 @@ app.post('/register/', async (req, resp) => {
 })
 
 // Route handler for user login
-app.post('/login', async (req, resp) => {
+app.post('/login', verifyToken, async (req, resp) => {
     // Check if both email and password are provided in the request body
     if (req.body.email && req.body.password) {
         // Find the user in the database based on the provided email and password
@@ -63,7 +64,7 @@ app.post('/login', async (req, resp) => {
     }
 })
 // making API for add product
-app.post('/add-product', async (req, resp) => {
+app.post('/add-product', verifyToken, async (req, resp) => {
     let product = new Product(req.body);
     let result = await product.save();
     resp.send(result);
@@ -79,7 +80,7 @@ app.get('/products', async (req, resp) => {
     }
 })
 
-app.delete('/product/:id', async (req, resp) => {
+app.delete('/product/:id',verifyToken ,async (req, resp) => {
     const result = await Product.deleteOne({ _id: req.params.id });
     resp.send(result);
 })
@@ -114,7 +115,7 @@ app.put('/product/:id', async (req, resp) => {
 //explaination of last search api
 // Using $or operator to find documents where 'name' matches the regex pattern specified by the 'key' parameter
 // Additional $or conditions can be added here if needed
-app.get('/search/:key', async (req, resp) => {
+app.get('/search/:key', verifyToken, async (req, resp) => {
 
     let result = await Product.find({
         "$or": [
@@ -124,5 +125,26 @@ app.get('/search/:key', async (req, resp) => {
     });
     resp.send(result);
 })
+
+//middleware
+function verifyToken(req, resp, next) {
+    let token = req.headers['authorization'];
+
+    if (token) {
+        token = token.split(' ')[1];
+        console.log("middleware called", token);
+        Jwt.verify(token, jwtKey, (err, valid) => {
+            if (err) {
+                resp.status(401).send({ result: "Please provide valid token" });
+            } else {
+                next();
+            }
+        })
+
+    } else {
+        resp.status(403).send({ result: "Please add token with header" });
+    }
+
+}
 
 app.listen(3200);
