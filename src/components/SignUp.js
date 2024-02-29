@@ -25,22 +25,25 @@ const SignUp = () => {
     })
 
     // Define a function to collect and log user data when the SignUp button is clicked
-    const collectData =async () => {
+        const collectData = async () => {
         console.log(name, email, password);
-        let result =await fetch('http://localhost:3200/register',{
-            method:'post',
-            body:JSON.stringify({name, email, password}),
-            headers:{
-                'Content-Type':'application/json'
+        let result = await fetch('http://localhost:3200/register', {
+            method: 'post',                                // Including name, email, and
+            body: JSON.stringify({ name, email, password }), //password in the request body                                     
+            headers: {
+                'Content-Type': 'application/json'
             },
         });
         result = await result.json();
         console.log(result)
-        localStorage.setItem('user',JSON.stringify(result));
-        if(result){
-            navigate('/')
+        // Storing the user's data and authentication token in the browser's local storage
+        localStorage.setItem('user', JSON.stringify(result.result));
+        localStorage.setItem('token', JSON.stringify(result.auth));
+        if (result) {
+            navigate('/')       // If registration is successful, navigate to the home page
         }
     }
+
 
     // Render the SignUp form with input fields for name, email, and password
     return (
