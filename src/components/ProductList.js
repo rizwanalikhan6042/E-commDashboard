@@ -11,11 +11,17 @@ const ProductList = () => {
 
     }, [])
 
-    const getProducts = async () => {
-        let result = await fetch('http://localhost:3200/products')   // Sending a GET request to the specified URL to fetch products data
+  const getProducts = async () => {
+        // Sending a GET request to fetch products data, including authorization token in the header
+        let result = await fetch('http://localhost:3200/products', {
+            headers: {                                                    // Including authorization token from local storage
+                authorization: JSON.parse(localStorage.getItem('token'))
+            }
+        });
         result = await result.json();
         setProducts(result);
     }
+
 
 
     const deleteProduct = async (id) => {
