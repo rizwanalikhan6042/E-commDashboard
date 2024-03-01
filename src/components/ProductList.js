@@ -11,11 +11,12 @@ const ProductList = () => {
 
     }, [])
 
-  const getProducts = async () => {
+    // Function to fetch products from the server with authorization token
+    const getProducts = async () => {
         // Sending a GET request to fetch products data, including authorization token in the header
         let result = await fetch('http://localhost:3200/products', {
-            headers: {                                                    // Including authorization token from local storage
-                authorization: JSON.parse(localStorage.getItem('token'))
+            headers: {                  // Authorization header with bearer token
+                authorization: `bearer ${JSON.parse(localStorage.getItem('token'))}`
             }
         });
         result = await result.json();
@@ -23,12 +24,15 @@ const ProductList = () => {
     }
 
 
-
     const deleteProduct = async (id) => {
         // console.log(id);
         // Send a DELETE request to the server to delete the product with the specified ID
         let result = await fetch(`http://localhost:3200/product/${id}`, {
+
             method: 'delete',     // Specify the http method as delete
+            headers: {            // Authorization header with bearer token
+                authorization: `bearer ${JSON.parse(localStorage.getItem('token'))}`
+            }
         })
         result = await result.json();
         if (result) {               // After successful deletion,        
@@ -44,8 +48,13 @@ const ProductList = () => {
     const searchHnadle = async (e) => {
         // Takes an event object as a parameter representing the input change event.
         let key = e.target.value;
+
         if (key) {
-            let result = await fetch(`http://localhost:3200/search/${key}`);
+            let result = await fetch(`http://localhost:3200/search/${key}`, {
+                headers: {               // Authorization header with bearer token
+                    authorization: `bearer ${JSON.parse(localStorage.getItem('token'))}`
+                }
+            });
             result = await result.json();
             if (result) {               // If the response is not empty (i.e., if products are found matching the search key), 
                 setProducts(result);    // it updates the state with the fetched products.                        
@@ -71,7 +80,7 @@ const ProductList = () => {
                 <li><b>Company</b></li>
                 <li><b>Operations</b></li>
             </ul>
-           { products.length>0 ? products.map((item, index) =>
+            {products.length > 0 ? products.map((item, index) =>
                 <ul key={item._id} >
 
 
@@ -90,10 +99,10 @@ const ProductList = () => {
                         {/* <Link to={"/update/"+item._id}>Update</Link>   Normal way & Above mentioned way is template literal way and modern way*/}
                     </li>
                 </ul>
-                
+
             )
-        : <h2>No Product Found !</h2>
-        }
+                : <h2>No Product Found !</h2>
+            }
 
         </div>
     )

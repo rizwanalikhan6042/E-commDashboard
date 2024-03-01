@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams , useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 // import { listeners } from "../../../FileVideo13-20/Expressstart/DB/users";
 
 
@@ -12,47 +12,44 @@ const UpdateProduct = () => {
     const params = useParams();
     const navigate = useNavigate();
 
-
-    // useEffect(() => {
-    //     //    console.log(params);
-    //  getProductDetails();
-    // }, [])
-
+    // Fetch product details when the component mounts
     useEffect(() => {
         getProductDetails();
     }, []);
 
-
+    // Function to fetch product details
     const getProductDetails = async () => {
-        // console.log(params);
-        let result = await fetch(`http://localhost:3200/product/${params.id}`);
+        // console.log(params);    // Fetch product details from the server
+        let result = await fetch(`http://localhost:3200/product/${params.id}`, {
+            headers: {                   // Authorization header with bearer token
+                authorization: `bearer ${JSON.parse(localStorage.getItem('token'))}`
+            }
+        });
         result = await result.json();
         console.log(result);
+        // Set product details to state variables
         setName(result.name);
-        console.log(name);
-
-        console.log(name)
         setPrice(result.price);
-        console.log(price)
-
         setCategory(result.category);
         setCompany(result.company);
 
     }
 
 
-
+    // Function to update product details
     const updateProduct = async () => {
+        // Send a PUT request to update the product with the specified ID
         let result = await fetch(`http://localhost:3200/product/${params.id}`, {
             method: 'put',
             body: JSON.stringify({ name, price, category, company }),
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json', // Authorization header with bearer token
+                authorization: `bearer ${JSON.parse(localStorage.getItem('token'))}`
             }
         })
         result = await result.json();
         console.log(result);
-        navigate('/');
+        navigate('/');           // Navigate back to the home page after updating the product
     }
 
 
