@@ -13,7 +13,7 @@ app.use(cors());
 app.use(express.json());
 // In the post route, I am adding comments to understand properly the working of route
 // Handling POST requests to the '/register' endpoint for registration signup
-app.post('/register/', verifyToken, async (req, resp) => {
+app.post('/register/', async (req, resp) => {
     // Creating a new user instance with the data from the request body
     let userRef = new userfileRef(req.body);
     // Saving the new user to the database
@@ -34,7 +34,7 @@ app.post('/register/', verifyToken, async (req, resp) => {
 })
 
 // Route handler for user login
-app.post('/login', verifyToken, async (req, resp) => {
+app.post('/login', async (req, resp) => {
     // Check if both email and password are provided in the request body
     if (req.body.email && req.body.password) {
         // Find the user in the database based on the provided email and password
@@ -71,7 +71,7 @@ app.post('/add-product', verifyToken, async (req, resp) => {
 
 })
 
-app.get('/products', async (req, resp) => {
+app.get('/products', verifyToken ,async (req, resp) => {
     let products = await Product.find();
     if (products.length > 0) {
         resp.send(products);
@@ -93,7 +93,7 @@ app.get('/product/:id', async (req, resp) => {
         resp.send({ "result": "No record found" })
     }
 })
-app.put('/product/:id', async (req, resp) => {
+app.put('/product/:id',verifyToken, async (req, resp) => {
     let result = await Product.updateOne(
         { _id: req.params.id },
         { $set: req.body }
@@ -102,7 +102,7 @@ app.put('/product/:id', async (req, resp) => {
 })
 
 // This endpoint handles GET requests to search for products based on a key
-// app.get('/search/:key', async (req, resp) => {
+// app.get('/search/:key', verifyToken ,async (req, resp) => {
 //     // Use async/await to ensure asynchronous execution
 //     // Search for products matching the provided key using MongoDB's Product model
 //     let result = await Product.find({
