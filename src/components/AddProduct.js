@@ -3,34 +3,37 @@ import { Navigate, useNavigate } from 'react-router-dom';
 
 
 const AddProduct = () => {
+    // State variables to store input values and error status
     const [name, setName] = useState("");
     const [price, setPrice] = useState("");
     const [category, setCategory] = useState("");
     const [company, setCompany] = useState("");
     const [error, setError] = useState(false);
-    const navigate =  useNavigate();
+    const navigate = useNavigate();      // Hook to navigate to different routes
 
+    // Function to add product
     const AddProduct = async () => {
         console.log(!name);
+        // Validation: Check if any field is empty          
         if (!name || !price || !category || !company) {
-            setError(true);
-            return false;
+            setError(true);  // Set error state to true
+            return false;    // Exit function
         }
 
-
+        // Fetch user ID from local storage
         const userId = JSON.parse(localStorage.getItem('user'))._id;
+        // Fetch request to add product
         let result = await fetch('http://localhost:3200/add-product/', {
             method: 'post',
             body: JSON.stringify({ name, price, category, company, userId }),
             headers: {
-                'Content-Type': 'application/json',
-                authorization : `bearer ${JSON.parse(localStorage.getItem('token'))}`
+                'Content-Type': 'application/json', // Authorization header with bearer token below
+                authorization: `bearer ${JSON.parse(localStorage.getItem('token'))}`
             }
         });
         result = await result.json();
-        
         console.log(result);
-        navigate('/');
+        navigate('/');              // Navigate to home page after adding product
 
     }
 
